@@ -15,7 +15,7 @@ import ImportSpecifier from './ast/nodes/ImportSpecifier';
 import Graph from './Graph';
 import Variable from './ast/variables/Variable';
 import Program from './ast/nodes/Program';
-import { Node } from './ast/nodes/shared/Node';
+import { GenericEsTreeNode, Node } from './ast/nodes/shared/Node';
 import ExportNamedDeclaration from './ast/nodes/ExportNamedDeclaration';
 import ImportDeclaration from './ast/nodes/ImportDeclaration';
 import Identifier from './ast/nodes/Identifier';
@@ -99,7 +99,17 @@ function includeFully(node: Node) {
 	if (node.variable && !node.variable.included) {
 		node.variable.include();
 	}
-	node.eachChild(includeFully);
+	for (const key of node.keys) {
+		const value = (<GenericEsTreeNode>node)[key];
+		if (value === null) continue;
+		if (Array.isArray(value)) {
+			for (const child of value) {
+				if (child !== null) includeFully(child);
+			}
+		} else {
+			includeFully(value);
+		}
+	}
 }
 
 export interface ModuleJSON {
@@ -433,9 +443,7 @@ export default class Module {
 	}
 
 	bindReferences() {
-		for (let node of this.ast.body) {
-			node.bind();
-		}
+		this.ast.bind();
 	}
 
 	getDynamicImportExpressions(): (string | Node)[] {
