@@ -14,7 +14,6 @@ export default class ExternalVariable extends Variable {
 	constructor(module: ExternalModule, name: string) {
 		super(name);
 		this.module = module;
-		this.isExternal = true;
 		this.isNamespace = name === '*';
 	}
 
@@ -33,3 +32,5 @@ export default class ExternalVariable extends Variable {
 		return true;
 	}
 }
+
+ExternalVariable.prototype.isExternal = true;
