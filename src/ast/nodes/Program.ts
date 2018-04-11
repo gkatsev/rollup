@@ -2,10 +2,17 @@ import MagicString from 'magic-string';
 import { NodeBase, StatementNode } from './shared/Node';
 import { NodeType } from './NodeType';
 import { RenderOptions, renderStatementList } from '../../utils/renderHelpers';
+import ExecutionPathOptions from '../ExecutionPathOptions';
 
 export default class Program extends NodeBase {
 	type: NodeType.Program;
 	body: StatementNode[];
+
+	hasEffects(options: ExecutionPathOptions) {
+		for (const node of this.body) {
+			if (node.hasEffects(options)) return true;
+		}
+	}
 
 	include() {
 		let anotherPassNeeded = false;
