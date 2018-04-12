@@ -583,7 +583,7 @@ export default class Module {
 	}
 
 	include() {
-		return this.ast.shouldBeIncluded() && this.ast.include();
+		if (this.ast.shouldBeIncluded()) this.ast.include();
 	}
 
 	namespace(): NamespaceVariable {
